@@ -3,27 +3,134 @@
 <head>
   <title>Secret Task Upload</title>
   <style>
-    body { background-color: #f0e68c; font-family: "Comic Sans MS", sans-serif; color: #000080; text-align: center; }
-    h1 { color: red; font-size: 36px; text-shadow: 2px 2px yellow; }
-    .instructions { border: 3px dashed #ff00ff; padding: 20px; margin: 20px; background-color: #ffffff; }
-    select, input[type="file"], button { font-size: 18px; margin: 10px; }
-    #status { margin-top: 20px; font-size: 20px; font-weight: bold; }
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000; /* black background for contrast */
+      font-family: "Comic Sans MS", sans-serif;
+      color: #fff;
+      text-align: center;
+      position: relative;
+      height: 100vh;
+    }
+    /* Container for content so background effects show behind */
+    .content {
+      position: relative;
+      z-index: 10;
+      background: rgba(240, 230, 140, 0.95); /* khaki-ish with opacity */
+      margin: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      color: #000080;
+    }
+    h1 {
+      color: red;
+      font-size: 36px;
+      text-shadow: 2px 2px yellow;
+    }
+    .instructions {
+      border: 3px dashed #ff00ff;
+      padding: 20px;
+      margin: 20px;
+      background-color: #ffffff;
+    }
+    .upload-button {
+      display: inline-block;
+      background-color: #28a745;
+      color: #fff;
+      padding: 15px 30px;
+      font-size: 22px;
+      text-decoration: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    }
+    .upload-button:hover {
+      background-color: #218838;
+    }
+    #countdown {
+      margin-top: 20px;
+      font-size: 26px;
+      font-weight: bold;
+      color: #ff0000;
+    }
+    /* Floating background text effect */
+    .floating-text {
+      position: absolute;
+      color: rgba(255,255,255,0.1);
+      font-size: 40px;
+      white-space: nowrap;
+      animation: floatAnim 15s linear infinite;
+    }
+    @keyframes floatAnim {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0.5; }
+    }
   </style>
 </head>
 <body>
-  <!-- Rotating banner -->
-  <marquee behavior="alternate" scrollamount="10" direction="left">
-    <h1>Welcome to the secret task!</h1>
-  </marquee>
-  <div class="instructions">
-    <p><b>Because the players are paired up before the eventual night, the secret task is:</b></p>
-    <p>👉 Take a selfie with any of the other contestants <u>without their knowledge</u> while they are doing something embarrassing.</p>
-    <p>👉 You must have something in the picture that says: <b>"This is for the secret task"</b>.</p>
-    <p>✅ Finish uploading by <b>9pm, August 2nd</b>.</p>
-    <p>🎉 <b>Bonus points for the funniest picture amongst all collected!</b></p>
+
+  <!-- Crazy floating background -->
+  <script>
+    for (let i = 0; i < 25; i++) {
+      const span = document.createElement('div');
+      span.className = 'floating-text';
+      span.style.left = Math.random() * 100 + 'vw';
+      span.style.animationDuration = (10 + Math.random() * 10) + 's';
+      span.style.fontSize = (30 + Math.random() * 40) + 'px';
+      span.textContent = 'Secret Task';
+      document.body.appendChild(span);
+    }
+  </script>
+
+  <div class="content">
+    <marquee behavior="alternate" scrollamount="10" direction="left">
+      <h1>Welcome to the secret task!</h1>
+    </marquee>
+
+    <div class="instructions">
+      <p><b>Because the players are paired up before the eventual night, the secret task is:</b></p>
+      <p>👉 Take a selfie with any of the other contestants <u>without their knowledge</u> while they are doing something embarrassing.</p>
+      <p>👉 You must have something in the picture that says: <b>"This is for the secret task"</b>.</p>
+      <p>✅ Finish uploading by <b>9pm, August 2nd, 2025 (CST)</b>.</p>
+      <p>🎉 <b>Bonus points for the funniest picture amongst all collected!</b></p>
+    </div>
+
+    <!-- Upload button -->
+    <a class="upload-button" href="https://docs.google.com/forms/d/e/1FAIpQLSdCGywpIDA-sKoZYaB_duVZBIKPn6epgN7ld6Z64jD5B4fjSQ/viewform?usp=sharing&ouid=108822150279688306545" target="_blank">
+      📤 Click Here to Upload Your Secret Task Photo
+    </a>
+
+    <!-- Countdown -->
+    <div id="countdown">⏳ Calculating time left...</div>
   </div>
-  <!-- Upload form -->
-  <!-- Upload button -->
-  <a class="upload-button" href="https://docs.google.com/forms/d/e/1FAIpQLSdCGywpIDA-sKoZYaB_duVZBIKPn6epgN7ld6Z64jD5B4fjSQ/viewform?usp=sharing&ouid=108822150279688306545" target="_blank">
-    📤 Click Here to Upload Your Secret Task Photo
-  </a>
+
+  <script>
+    function updateCountdown() {
+      // Target date: August 2, 2025 9pm CST
+      const targetDate = new Date('2025-08-02T21:00:00-06:00'); // adjust for CST offset (UTC-6)
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        document.getElementById('countdown').textContent = "✅ Deadline reached!";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById('countdown').textContent =
+        `⏳ Time left: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+
+</body>
+</html>
