@@ -1,82 +1,111 @@
+https://script.google.com/macros/s/AKfycbwWGPxNlcdhHKCzWTB3lugsVv1_9NlU0gS2K2X35XvYw9brdsBqLNNol-2ZdAQi5jyD4w/exec
+
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Secret Task Upload</title>
-    <style>
-      body {
-        background-color: #f0e68c;
-        font-family: "Comic Sans MS", sans-serif;
-        color: #000080;
-        text-align: center;
-      }
-      h1 {
-        color: red;
-        font-size: 36px;
-        text-shadow: 2px 2px yellow;
-      }
-      .instructions {
-        border: 3px dashed #ff00ff;
-        padding: 20px;
-        margin: 20px;
-        background-color: #ffffff;
-      }
-      select,
-      input[type="file"],
-      input[type="submit"] {
-        font-size: 18px;
-        margin: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Rotating banner -->
-    <marquee behavior="alternate" scrollamount="10" direction="left">
-      <h1>Welcome to the secret task!</h1>
-    </marquee>
+<head>
+  <title>Secret Task Upload</title>
+  <style>
+    body {
+      background-color: #f0e68c;
+      font-family: "Comic Sans MS", sans-serif;
+      color: #000080;
+      text-align: center;
+    }
+    h1 {
+      color: red;
+      font-size: 36px;
+      text-shadow: 2px 2px yellow;
+    }
+    .instructions {
+      border: 3px dashed #ff00ff;
+      padding: 20px;
+      margin: 20px;
+      background-color: #ffffff;
+    }
+    select, input[type="file"], button {
+      font-size: 18px;
+      margin: 10px;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
 
-    <div class="instructions">
-      <p>
-        <b
-          >Because the players are paired up before the eventual night, the
-          secret task is:</b
-        >
-      </p>
-      <p>
-        👉 Take a selfie with any of the other contestants
-        <u>without their knowledge</u> while they are doing something
-        embarrassing.
-      </p>
-      <p>
-        👉 You must have something in the picture that says:
-        <b>"This is for the secret task"</b>.
-      </p>
-      <p>✅ Finish uploading by <b>9pm, August 2nd</b>.</p>
-      <p>
-        🎉 <b>Bonus points for the funniest picture amongst all collected!</b>
-      </p>
-    </div>
+  <!-- Rotating banner -->
+  <marquee behavior="alternate" scrollamount="10" direction="left">
+    <h1>Welcome to the secret task!</h1>
+  </marquee>
 
-    <form
-      action="https://script.google.com/macros/s/AKfycbxk4EO6Sphm7edzWdKGHNt6tBXi8MrhbylNWGtMkNbCuCSVP50_EbNiMHCk9clk8iL6vw/exec"
-      method="post"
-      enctype="multipart/form-data"
-    >
-      <label for="player">Select Player:</label>
-      <select name="player" id="player">
-        <option value="Aravind">Aravind</option>
-        <option value="Gattu">Gattu</option>
-        <option value="Betty">Betty</option>
-        <option value="Gurnoor">Gurnoor</option>
-      </select>
-      <br /><br />
-      <label for="file">Upload your secret task photo:</label>
-      <br />
-      <input type="file" name="file" id="file" accept="image/*" />
-      <br /><br />
-      <input type="submit" value="Upload Photo" />
-    </form>
+  <div class="instructions">
+    <p><b>Because the players are paired up before the eventual night, the secret task is:</b></p>
+    <p>👉 Take a selfie with any of the other contestants <u>without their knowledge</u> while they are doing something embarrassing.</p>
+    <p>👉 You must have something in the picture that says: <b>"This is for the secret task"</b>.</p>
+    <p>✅ Finish uploading by <b>9pm, August 2nd</b>.</p>
+    <p>🎉 <b>Bonus points for the funniest picture amongst all collected!</b></p>
+  </div>
 
-    <hr />
-    <p><i>Remember: Keep it secret, keep it fun! 😈📸</i></p>
-  </body>
+  <!-- Upload form -->
+  <div>
+    <label for="player">Select Player:</label>
+    <select id="player">
+      <option value="Aravind">Aravind</option>
+      <option value="Gattu">Gattu</option>
+      <option value="Betty">Betty</option>
+      <option value="Gurnoor">Gurnoor</option>
+    </select>
+    <br><br>
+    <label for="file">Upload your secret task photo:</label>
+    <br>
+    <input type="file" id="file" accept="image/*">
+    <br><br>
+    <button onclick="uploadFile()">Upload Photo</button>
+  </div>
+
+  <div id="status"></div>
+
+  <script>
+    async function uploadFile() {
+      const statusDiv = document.getElementById('status');
+      statusDiv.style.color = 'black';
+      statusDiv.textContent = '⏳ Uploading...';
+
+      const player = document.getElementById('player').value;
+      const fileInput = document.getElementById('file');
+      if (!fileInput.files.length) {
+        statusDiv.style.color = 'red';
+        statusDiv.textContent = '❌ Please select a file first!';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('player', player);
+      formData.append('file', fileInput.files[0]);
+
+      try {
+        const response = await fetch('YOUR_WEB_APP_URL_HERE', {
+          method: 'POST',
+          body: formData,
+        });
+        const text = await response.text();
+
+        // show success on the same page
+        statusDiv.style.color = 'green';
+        if (text.includes('Error') || text.includes('❌')) {
+          statusDiv.style.color = 'red';
+          statusDiv.textContent = '❌ Upload failed: ' + text;
+        } else {
+          statusDiv.textContent = '✅ Upload successful!';
+        }
+      } catch (err) {
+        statusDiv.style.color = 'red';
+        statusDiv.textContent = '❌ Upload failed: ' + err.message;
+      }
+    }
+  </script>
+
+</body>
 </html>
